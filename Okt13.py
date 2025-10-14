@@ -1,19 +1,3 @@
-'''import telebot
-from telebot import types
-
-key = '8083991871:AAFQUf9VaHYh362ygDiwvDiDt1xMZUuEnQc'
-bot = telebot.TeleBot(key)
-
-@bot.message_handler(commands=['start'])
-def main(message):
-    markup=types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    item1=types.KeyboardButton("Магазин")
-    item2 = types.KeyboardButton("Корзина")
-    markup.add(item1, item2)
-    bot.send_message(message.chat.id, reply_markup=markup)
-
-
-bot.infinity_polling()'''
 from flask import Flask, render_template, request
 import telebot  # Если интегрируете с ботом; pip install pyTelegramBotAPI
 
