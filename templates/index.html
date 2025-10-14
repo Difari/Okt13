@@ -13,10 +13,10 @@
       }
 
       body {
-        color: var(--tg-theme-text-color, #000000); /* Фолбэк на случай ошибки */
+        color: var(--tg-theme-text-color, #000000);
         background: var(--tg-theme-bg-color, #ffffff);
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        overflow: hidden; /* Для TMA */
+        overflow: hidden;
       }
 
       .Main {
@@ -27,7 +27,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh; /* Полная высота для TMA */
+        height: 100vh;
       }
 
       h1 {
@@ -64,7 +64,6 @@
         opacity: 0.9;
       }
 
-      /* Скрываем кнопку, если используем Main Button Telegram */
       .hidden {
         display: none;
       }
@@ -80,35 +79,27 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-      // Инициализация Telegram Web App
       const tg = window.Telegram.WebApp;
-      tg.ready(); // Сигнал готовности
-      tg.expand(); // Расширить на весь экран
+      tg.ready();
+      tg.expand();
 
-      // Настройка Main Button (кнопка внизу от Telegram)
-      tg.MainButton.text = "Отправить"; // Текст кнопки
-      tg.MainButton.color = tg.themeParams.button_color || '#007bff'; // Цвет из темы
+      tg.MainButton.text = "Отправить";
+      tg.MainButton.color = tg.themeParams.button_color || '#007bff';
       tg.MainButton.textColor = tg.themeParams.button_text_color || '#ffffff';
-      tg.MainButton.isVisible = false; // Сначала скрыта
+      tg.MainButton.isVisible = false;
       tg.MainButton.isActive = true;
 
-      // Обработчик клика на Main Button
       tg.MainButton.onClick(function() {
-        // Здесь логика: отправка данных в бота
-        tg.sendData('Кнопка нажата!'); // Отправляет данные в бота (обработайте в Bot API)
-        tg.MainButton.isVisible = false; // Скрыть после клика
+        tg.sendData('Кнопка нажата!');
+        tg.MainButton.isVisible = false;
         document.getElementById('showMainBtn').innerText = 'Готово!';
         document.getElementById('showMainBtn').disabled = true;
       });
 
-      // Обработчик вашей кнопки в странице
       document.getElementById('showMainBtn').addEventListener('click', function() {
-        tg.MainButton.isVisible = true; // Показать Main Button
-        this.classList.add('hidden'); // Скрыть вашу кнопку
+        tg.MainButton.isVisible = true;
+        this.classList.add('hidden');
       });
-
-      // Дополнительно: обработка темы (если нужно обновлять динамически)
-      // tg.onEvent('themeChanged', function() { document.body.style.background = tg.themeParams.bg_color; });
     </script>
   </body>
 </html>
