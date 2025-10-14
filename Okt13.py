@@ -20,7 +20,7 @@ import telebot  # Если интегрируете с ботом; pip install p
 app = Flask(__name__)
 
 # Ваш токен бота (храните в переменных окружения!)
-BOT_TOKEN = 'YOUR_BOT_TOKEN'
+BOT_TOKEN = '8083991871:AAFQUf9VaHYh362ygDiwvDiDt1xMZUuEnQc'
 bot = telebot.TeleBot(BOT_TOKEN)
 
 @app.route('/')
