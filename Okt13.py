@@ -21,3 +21,4 @@ if __name__ == '__main__':
     # Для dev: app.run(ssl_context='adhoc')  # HTTPS для теста
     # В production: Gunicorn через amvera.yml
     app.run(host='0.0.0.0', port=5000)
+    https://prod.liveshare.vsengsaas.visualstudio.com/join?CED0A27A52F9A5C51A51677B9EDF31EF96B1
