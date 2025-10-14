@@ -1,9 +1,9 @@
 meta:
-  environment: python  # Для Python
+  environment: python
   toolchain:
     name: pip
     run:
       command: |
-        pip install --timeout 120 -r requirements.txt  # Установка с увеличенным timeout
-        gunicorn --bind 0.0.0.0:${PORT:-5000} Okt13:app  # Bind to $PORT; замените Okt13 на ваш файл (например, sho:app, если sho.py)
-  containerPort: 5000  # Фолбэк порт
+        pip install --timeout 120 --index-url https://pypi.org/simple/ -r requirements.txt
+        gunicorn --bind 0.0.0.0:${PORT:-5000} Okt13:app  # Okt13:app — файл:instance; замените если sho.py
+  containerPort: 5000
