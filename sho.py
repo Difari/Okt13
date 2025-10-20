@@ -2,9 +2,10 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route("/")
 def index():
-    return render_template('index.html')  # Ваш файл с кодом выше
+    return render_template("index.html")
 
-if __name__ == '__main__':
-    app.run(ssl_context='adhoc')  # Для HTTPS в dev (Telegram требует HTTPS)
+if __name__ == "__main__":
+    # Dev server (no HTTPS) just to check the WebApp UI locally
+    app.run(host="0.0.0.0", port=5000, debug=True)

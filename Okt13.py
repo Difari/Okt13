@@ -1,88 +1,33 @@
 import os
-from flask import Flask, render_template, request, jsonify
-import telebot
+from flask import Flask, request, render_template
+from telebot import TeleBot, types
 
+# Load token from environment for safety
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+if not BOT_TOKEN:
+    raise RuntimeError("Set BOT_TOKEN env var before starting the app")
+
+bot = TeleBot(BOT_TOKEN)
 app = Flask(__name__)
 
-BOT_TOKEN = "8083991871:AAFQUf9VaHYh362ygDiwvDiDt1xMZUuEnQc"
-bot = telebot.TeleBot(BOT_TOKEN)
-
-@app.route('/')
+@app.route("/", methods=["GET"])
 def index():
-    return render_template('templates/index.html')
+    # templates/index.html
+    return render_template("index.html")
 
-@app.route('/webhook', methods=['POST'])
+@app.route("/webhook", methods=["POST"])
 def webhook():
-    json_data = request.get_json()
-    try:
-        update = telebot.types.Update.de_json(json_data)
-        bot.process_new_updates([update])
-        return jsonify({'status': 'ok'})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    # Telegram will POST application/json updates here
+    if request.headers.get("content-type") != "application/json":
+        return "Unsupported Media Type", 415
+    update = types.Update.de_json(request.get_data(as_text=True))
+    bot.process_new_updates([update])
+    return "", 200
 
-@bot.message_handler(content_types=['web_app_data'])
-def handle_web_app_data(message):
-    data = message.web_app_data.data
-    bot.reply_to(message, f"Получено из Mini App: {data}")
+@app.route("/healthz", methods=["GET"])
+def healthz():
+    return "ok", 200
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, ssl_context='adhoc')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#Если вы его видите, то вы гей!!
-'''
-⡽⣩⠳⣉⢞⡰⢡⠎⡴⠡⢎⠴⢡⠎⠴⣡⠒⡔⡂⢖⠰⢢⢘⠰⠢⠜⣐⢢⠒⡌⣰⣂⣦⣑⣦⣘⢄⠒⡔⠢⠜⡐⠦⡘⢤⠣⡜⢤⠣⢜⡰⠌⢦⡑⢎⡲⢡⠏⡼⡱
-⡳⢥⡓⡍⢦⡑⢣⢚⠰⣉⠎⣌⠣⡜⠱⠤⡩⣐⠉⡆⢍⠢⢩⢌⡱⢉⠔⣂⣳⣾⣿⢟⠋⡉⠉⠉⠝⣾⣤⠙⡌⠱⡌⡱⢌⡱⠌⢦⠙⡢⢅⢋⠦⡙⡜⡴⢋⡼⢱⢣
-⡝⢦⠓⣍⠶⣉⠖⣩⠒⡥⢚⠤⡓⡜⢣⢣⠑⠦⡙⠰⢊⠥⢃⠆⡬⢁⠎⣼⣿⣿⢋⠆⠀⠀⠀⠀⠀⠈⠊⢷⡌⠱⢠⠑⠢⠜⡘⠦⡙⠴⣉⠎⢲⢡⠛⡴⣋⠼⡹⢆
-⡙⣎⡹⢤⠓⣌⠚⣄⠳⣈⠎⡴⠱⡨⢅⠦⣉⠦⠡⢍⠬⡘⡌⠦⡑⢩⣼⣿⣿⣷⣈⠔⠀⠀⠀⣀⣀⠀⠀⠀⢿⢀⠣⡘⢡⢃⡱⢌⠱⡘⢤⡙⢢⢣⡙⠴⣡⠫⣕⢫
-⠳⣜⠢⢇⡹⢄⠏⡔⢣⠜⡸⣐⢣⡑⢎⡒⢅⠪⡑⡌⢒⡱⡘⡔⡉⢾⣿⣿⣿⣿⣿⣷⣷⣦⣄⡀⠀⠀⠀⠀⣿⠀⠢⠑⠢⢌⠰⡈⠆⡍⡒⢬⡑⠦⡙⡜⣰⠹⣌⠧
-⣙⠦⡛⣌⠖⣩⠚⡬⡑⢎⡑⢆⠣⡜⢢⠩⢌⢒⡡⢌⡱⢄⠣⡐⢡⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣶⣾⣿⡄⠑⡈⣁⠢⢑⡈⠒⠤⡑⠢⠜⡱⡘⠴⣡⠓⡌⠒
-⢎⡵⢓⡬⢚⠤⣋⠴⣉⠦⡙⢬⠱⣌⠣⣍⠲⠨⠔⡊⢔⡈⢆⢡⣿⣿⣿⣿⣿⣿⠟⣿⣿⣿⣿⣿⡏⣿⣿⣿⣿⡇⠠⠁⠄⢂⠡⡐⢉⠆⡡⠓⡌⡔⠱⠈⠄⠂⠀⠀
-⡣⢞⡡⢞⡡⢓⡌⢲⠡⢎⡑⢎⡱⢄⠳⢄⠋⡥⢓⣌⢢⣘⣴⣿⣿⣿⣿⣿⣿⣿⣽⣶⣿⣿⣟⡋⠀⠛⣿⠟⠋⠀⠠⠁⠈⠄⠡⢀⠃⢌⠐⠡⠐⠀⠁⠀⠀⠀⠀⠀
-⡱⡍⡜⢢⠉⠀⢺⡄⢫⠔⣉⠆⢆⣩⡶⠛⠋⠉⣩⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⣟⠽⠿⠿⣹⣿⢯⠀⠀⠀⠀⠀⠁⠈⠐⠀⠈⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⡱⡘⣌⠣⠀⠀⠀⠻⢦⣘⣄⠚⠚⠉⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢯⡹⢟⠶⠶⢚⡇⢺⣤⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⢡⠓⠄⠁⠀⠀⠀⠀⠀⠉⢾⣌⠡⣒⣾⣿⣿⣿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣽⣮⣜⣦⡿⢁⡏⢻⣮⠙⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⢌⡁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⣉⣿⣿⣿⣿⣿⣿⠿⠶⢻⣿⣿⣿⣿⡛⢿⡿⣿⣿⣻⣿⣿⣿⡟⣀⣼⣥⣤⣿⣷⡬⠷⢤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⡀⢆⠐⠠⠂⠄⢀⢀⣠⣴⣶⣿⣿⣿⣿⣿⣮⣷⡻⡜⠢⢡⢿⢻⢿⣿⣿⣧⠞⣴⠫⠽⡛⢿⣿⣾⣿⡟⠉⠍⠛⢿⣿⣄⠀⠲⢍⠢⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠐⠠⠈⠐⠀⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⡷⡙⡬⢑⣸⢌⡣⢞⣻⣿⣿⣿⡰⢏⡳⡘⢎⠹⢿⣿⣷⣭⠾⡍⣒⢻⣿⡷⣤⣈⣂⠈⠣⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠁⠀⠀⢀⣽⣿⣿⣿⣿⣿⣿⣿⣿⣟⡷⣹⢱⠣⠜⣰⣏⣶⠝⣪⣼⡿⣿⣿⣷⣝⢲⠱⣈⠆⢈⢻⣿⣝⣳⣌⡖⣌⢿⣿⣍⡝⣻⣗⠢⢌⡆⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡽⣞⡥⢣⡉⠾⠛⠉⢀⣾⡿⣣⣶⡿⣿⣿⣿⡼⠒⠧⣎⠀⡄⣿⣿⡲⣿⣿⢿⣿⣿⣿⣬⢉⡙⠛⠫⣍⠢⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣝⢮⣁⠒⡀⠀⣠⣿⣿⣿⣿⣧⡳⢾⣿⣿⣿⡌⠀⠿⢞⣠⢽⣿⣷⣿⣻⢿⠶⡿⣿⢿⡄⡘⠄⠀⠈⢧⡉⢤⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣳⢯⡖⣌⠒⣤⣾⣿⣿⣿⣿⣿⡹⡗⢿⣿⣿⡿⣷⡀⠟⠛⠧⡈⠹⢻⣿⣿⣾⡻⡴⢻⣿⣿⠀⢂⠈⢀⡼⠃⠀⢡⠀⠀⠀⠀
-⠀⠀⠀⠀⣠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣯⢿⣝⣮⣿⣿⣿⣿⣿⣿⣿⣷⣳⠹⣎⢿⣿⣿⣿⣿⠆⠀⠀⠀⠀⠛⢿⣿⣿⣟⡵⣿⣿⣿⣿⠂⠛⠛⠃⠀⠀⠀⢣⠀⠀⠀
-⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣯⢷⡺⣌⡛⢻⣟⣷⠀⠀⠀⠀⠀⠘⢾⣿⣿⣿⣳⢭⣿⣿⠇⠀⠀⠀⠀⠀⡰⢀⠸⡀⠀⠀
-⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣭⣛⢿⣿⣿⣟⡯⠉⢻⣿⣿⣿⣿⣿⣿⣿⣿⣽⣳⡽⣆⣿⣿⡆⠀⠀⠀⠀⣠⣿⣿⣿⣿⣯⣷⣻⣿⠀⠀⠀⠀⠀⢰⠃⢸⢲⠁⠀⠀
-⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⡶⣝⣮⣙⠻⡍⢏⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣽⣻⣽⣾⣟⠻⣿⠀⠀⣠⣿⣿⣿⣿⣿⣿⣿⡿⣿⣦⠀⠀⠀⡠⠏⠀⢸⡏⠀⠀⠀
-⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣯⣓⡜⢦⠈⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣾⢧⣛⡿⣿⣰⣿⣆⣶⢧⣿⣿⣿⣿⣿⣿⣿⣱⣿⢡⡀⣰⢾⣇⡀⠀⡼⠀⠀⠀⠀
-⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠆⠁⠀⠀⢾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣽⣳⣿⣿⣻⣿⣿⣿⣯⣭⣽⣿⣿⣿⣿⣿⣧⣳⣜⣷⣮⣾⣿⠿⡀⠀⠀⠀⠀
-⠀⠀⠀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⣿⣿⣿⣿⡍⠀⠀⡇⠀⠀⠀⠀
-'''
+if __name__ == "__main__":
+    # Local dev: this won't receive Telegram updates unless publicly reachable via HTTPS
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "8000")), debug=True)
