@@ -3,7 +3,7 @@ from flask import Flask, request, render_template
 from telebot import TeleBot, types
 
 # Load token from environment for safety
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("8371436972:AAEfJh14kfVs2zeLZ6IirWZ3y_pgn_rqrdw")
 if not BOT_TOKEN:
     raise RuntimeError("Set BOT_TOKEN env var before starting the app")
 
